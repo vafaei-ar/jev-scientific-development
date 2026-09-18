@@ -1,1 +1,104 @@
-# jev-scientific-development
+# JEV Scientific Development
+
+A research-development bridge between ChatGPT and TypeSafe AI's JEV model.
+
+JEV is used here as a fast, structured evaluator. It receives scientific text as state and answers predefined judgment questions with calibrated structured outputs. ChatGPT remains responsible for interpretation, scientific reasoning, writing, and document editing.
+
+## Why this architecture
+
+JEV is not a chat model and does not generate reviewer prose. Its strength is narrow, typed decisions that can be embedded inside a larger workflow. This repository exposes those decisions through an MCP server and pairs the server with a ChatGPT Skill that defines when and how to use them.
+
+```text
+ChatGPT
+  |
+  |  jev-scientific-development Skill
+  v
+JEV MCP server
+  |
+  +-- evaluate_paper
+  +-- evaluate_proposal
+  +-- audit_scientific_writing
+  +-- challenge_claim
+  |
+  v
+TypeSafe / JEV System One API
+```
+
+## V0.1 tools
+
+- `evaluate_paper`: structured judgments on study validity, claim alignment, reproducibility, and the dominant scientific risk.
+- `evaluate_proposal`: structured judgments on significance, aim-method alignment, feasibility, overclaim, and likely reviewer concern.
+- `audit_scientific_writing`: structured judgments on clarity, specificity, scientific tone, formulaic wording, and rhetorical over-structuring.
+- `challenge_claim`: stress-tests a scientific claim against supplied evidence and context.
+
+The first version intentionally uses JEV Choice questions only. This keeps the provider contract simple and explicit. Noul and Score primitives can be added after we validate their exact production schema in the user's TypeSafe account.
+
+## Setup
+
+Python 3.11+ is recommended.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env
+```
+
+Set your API key in the environment:
+
+```bash
+export TYPESAFE_API_KEY="..."
+```
+
+Do not commit API keys. The repository ignores `.env` files.
+
+Run the MCP server over Streamable HTTP:
+
+```bash
+jev-mcp
+```
+
+The default endpoint is `http://127.0.0.1:8000/mcp`.
+
+For local MCP development, use the MCP Inspector or a secure tunnel supported by the MCP host. For ChatGPT, connect the deployed/tunneled MCP endpoint as a custom MCP app, then install or use the companion Skill in `skill/jev-scientific-development/`.
+
+## JEV provider configuration
+
+Defaults follow the currently documented direct TypeSafe interface:
+
+```text
+POST https://api.typesafe.ai/v1/systemone
+model: jev-latest
+```
+
+Environment variables:
+
+```text
+TYPESAFE_API_KEY=...
+JEV_API_KEY=...                  # optional alias
+JEV_ENDPOINT=https://api.typesafe.ai/v1/systemone
+JEV_MODEL=jev-latest
+JEV_TIMEOUT_SECONDS=30
+MCP_TRANSPORT=streamable-http
+MCP_HOST=127.0.0.1
+MCP_PORT=8000
+```
+
+## Research-data boundary
+
+Calling a JEV tool sends the supplied state to the configured JEV provider. Do not send credentials, restricted identifiers, PHI, or other data that the provider is not authorized to receive. Prefer the minimum text needed for the judgment.
+
+For unpublished manuscripts and proposals, use the same institutional and sponsor data-handling rules that apply to any external AI service.
+
+## Development
+
+```bash
+pytest
+python -m compileall -q src
+```
+
+See `docs/architecture.md`, `docs/chatgpt-setup.md`, and `docs/development.md`.
+
+## Status
+
+V0.1 is an initial research scaffold. The MCP contract and provider adapter are intentionally small so they can be tested against real JEV responses before we expand the rubric library.
