@@ -7,6 +7,7 @@ from mcp.server.mcpserver import MCPServer
 
 from jev_research.config import JevConfig
 from jev_research.jev.client import JevClient
+from jev_research.jev.normalize import normalize_system_one_response
 from jev_research.rubrics import (
     RUBRIC_VERSION,
     claim_questions,
@@ -32,13 +33,18 @@ def _evaluate(
     questions: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     with JevClient(JevConfig.from_env()) as client:
-        result = client.evaluate(state=state, questions=questions)
-    return {
+        raw = client.evaluate(state=state, questions=questions)
+
+    normalized = normalize_system_one_response(raw)
+    result: dict[str, Any] = {
         "tool": tool_name,
         "rubric_version": RUBRIC_VERSION,
         "provider": "TypeSafe/JEV",
-        "result": result,
+        **normalized,
     }
+    if os.getenv("JEV_INCLUDE_RAW", "").lower() in {"1", "true", "yes"}:
+        result["raw"] = raw
+    return result
 
 
 @mcp.tool()

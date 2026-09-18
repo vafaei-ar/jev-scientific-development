@@ -36,6 +36,23 @@ Inputs:
 
 Use to judge support strength, strongest defensible inference type, alternative-explanation risk, and recommended claim action.
 
-## Output handling
+## Normalized output
 
-V0.1 returns the raw JEV provider result under `result`, plus tool and rubric metadata. Prefer the provider's probabilities/confidence when present. A winning choice with a close alternative is weak evidence for acting automatically.
+All tools return the same application-level shape:
+
+- `model`: resolved JEV model identifier when returned by the provider.
+- `judgments`: one object per rubric question.
+- `usage`: token usage when returned.
+- `tool`, `rubric_version`, and `provider`: provenance metadata.
+
+For a Choice judgment, expect:
+- `value`: selected criterion.
+- `confidence`: provider confidence when present.
+- `probabilities`: all criterion probabilities.
+- `probability_margin`: top probability minus second-highest probability.
+
+A small probability margin means the leading option is weakly separated from its nearest alternative. Do not convert the margin into a universal pass/fail threshold.
+
+For Score and Noul, the normalizer preserves the provider's value and probabilities in a consistent shape.
+
+Set `JEV_INCLUDE_RAW=true` only for debugging the provider contract. Normal document workflows should use the normalized fields.

@@ -28,8 +28,8 @@ Calling JEV transmits the supplied state to the configured external JEV provider
 2. Perform normal scientific reasoning first. Do not outsource the whole problem to JEV.
 3. Select the narrowest matching JEV MCP tool.
 4. Send only the relevant text/state.
-5. Inspect the returned choice distribution and confidence when available.
-6. Treat close distributions or low confidence as unresolved, not as a verdict.
+5. Inspect the normalized `judgments` returned by the tool.
+6. For Choice judgments, inspect both the selected `value` and the probability distribution. Treat a small `probability_margin` as weak separation, not as a verdict.
 7. Compare JEV's judgment with the scientific reasoning already performed.
 8. Investigate material disagreements using methods logic, source evidence, citations, code, or additional document context.
 9. Revise only when the issue is scientifically justified.
@@ -56,6 +56,8 @@ If ChatGPT and JEV agree, continue only after checking whether the conclusion is
 If ChatGPT and JEV disagree, identify the exact premise causing the disagreement. Check the source text, study design, analysis, or citation. Do not choose a side because one model appears more confident.
 
 If JEV returns `insufficient_information`, obtain or inspect the missing context instead of forcing a judgment.
+
+Do not impose a universal confidence or probability-margin threshold across all scientific tasks. Calibrate thresholds only after observing performance on a task-specific labeled set.
 
 ## Composition with other research workflows
 

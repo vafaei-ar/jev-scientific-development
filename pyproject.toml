@@ -23,6 +23,7 @@ dev = [
 
 [project.scripts]
 jev-mcp = "jev_research.mcp.server:main"
+jev-smoke = "jev_research.smoke:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/jev_research"]
