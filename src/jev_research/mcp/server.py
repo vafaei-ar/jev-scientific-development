@@ -5,7 +5,7 @@ from typing import Any
 
 from mcp.server.mcpserver import MCPServer
 
-from jev_research.config import JevConfig
+from jev_research.config import JevConfig, load_environment
 from jev_research.jev.client import JevClient
 from jev_research.jev.normalize import normalize_system_one_response
 from jev_research.rubrics import (
@@ -16,6 +16,8 @@ from jev_research.rubrics import (
     writing_questions,
 )
 
+LOOPBACK_HOSTS = {"127.0.0.1", "localhost", "::1"}
+
 mcp = MCPServer(
     "JEV Scientific Development",
     instructions=(
@@ -24,6 +26,15 @@ mcp = MCPServer(
         "a JEV judgment as proof or external evidence."
     ),
 )
+
+
+def _validate_bind_host(host: str) -> None:
+    if host not in LOOPBACK_HOSTS:
+        raise RuntimeError(
+            "V0.1 refuses non-loopback MCP binds. Keep MCP_HOST on localhost and use "
+            "OpenAI Secure MCP Tunnel for ChatGPT, or place a future deployment behind "
+            "standards-compliant OAuth 2.1 authentication before enabling a public bind."
+        )
 
 
 def _evaluate(
@@ -109,6 +120,8 @@ def challenge_claim(
 
 
 def main() -> None:
+    load_environment()
+
     transport = os.getenv("MCP_TRANSPORT", "streamable-http")
     if transport == "stdio":
         mcp.run("stdio")
@@ -117,6 +130,7 @@ def main() -> None:
         raise RuntimeError("MCP_TRANSPORT must be 'stdio' or 'streamable-http'")
 
     host = os.getenv("MCP_HOST", "127.0.0.1")
+    _validate_bind_host(host)
     port = int(os.getenv("MCP_PORT", "8000"))
     mcp.run(
         "streamable-http",

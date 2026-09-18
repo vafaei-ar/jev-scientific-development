@@ -31,7 +31,7 @@ TypeSafe / JEV System One API
 - `audit_scientific_writing`: structured judgments on clarity, specificity, scientific tone, formulaic wording, and rhetorical over-structuring.
 - `challenge_claim`: stress-tests a scientific claim against supplied evidence and context.
 
-The first version intentionally uses JEV Choice questions only. This keeps the provider contract simple and explicit. Noul and Score primitives can be added after we validate their exact production schema in the user's TypeSafe account.
+The MCP returns normalized `judgments` so ChatGPT does not depend on vendor-specific response details.
 
 ## Setup
 
@@ -44,15 +44,15 @@ pip install -e ".[dev]"
 cp .env.example .env
 ```
 
-Set your API key in the environment:
+Put the JEV key in `.env`:
 
-```bash
-export TYPESAFE_API_KEY="..."
+```text
+TYPESAFE_API_KEY=...
 ```
 
-Do not commit API keys. The repository ignores `.env` files.
+The application loads `.env` from the current working directory and never commits it.
 
-Run the MCP server over Streamable HTTP:
+Run the local MCP server:
 
 ```bash
 jev-mcp
@@ -60,11 +60,25 @@ jev-mcp
 
 The default endpoint is `http://127.0.0.1:8000/mcp`.
 
-For local MCP development, use the MCP Inspector or a secure tunnel supported by the MCP host. For ChatGPT, connect the deployed/tunneled MCP endpoint as a custom MCP app, then install or use the companion Skill in `skill/jev-scientific-development/`.
+### ChatGPT connection
+
+V0.1 deliberately permits loopback binds only. Use OpenAI Secure MCP Tunnel to connect ChatGPT to the local/private server. Do not expose this server directly to the public internet.
+
+See `docs/chatgpt-setup.md`.
+
+## Live JEV smoke test
+
+After configuring the key:
+
+```bash
+jev-smoke
+```
+
+This sends a synthetic study-design sentence only. It does not send any manuscript, proposal, patient, or institutional data.
+
+See `docs/live-smoke-test.md`.
 
 ## JEV provider configuration
-
-Defaults follow the currently documented direct TypeSafe interface:
 
 ```text
 POST https://api.typesafe.ai/v1/systemone
@@ -79,6 +93,8 @@ JEV_API_KEY=...                  # optional alias
 JEV_ENDPOINT=https://api.typesafe.ai/v1/systemone
 JEV_MODEL=jev-latest
 JEV_TIMEOUT_SECONDS=30
+JEV_INCLUDE_RAW=false
+JEV_ENV_FILE=...                # optional .env path
 MCP_TRANSPORT=streamable-http
 MCP_HOST=127.0.0.1
 MCP_PORT=8000
@@ -101,4 +117,4 @@ See `docs/architecture.md`, `docs/chatgpt-setup.md`, and `docs/development.md`.
 
 ## Status
 
-V0.1 is an initial research scaffold. The MCP contract and provider adapter are intentionally small so they can be tested against real JEV responses before we expand the rubric library.
+V0.1 is an initial research scaffold. The next technical step after a successful live smoke test is to capture a sanitized real response fixture and then expand the rubric library.
