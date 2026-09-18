@@ -1,10 +1,26 @@
 # Development
 
+## Python requirement
+
+Python 3.10 or newer is required. CI tests the package on Python 3.10 and 3.12.
+
+Before creating an environment:
+
+```bash
+python --version
+```
+
+If the active interpreter is older than 3.10, create a dedicated environment first. With Conda:
+
+```bash
+conda create -n jev-mcp python=3.11 -y
+conda activate jev-mcp
+```
+
 ## Local checks
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -e ".[dev]"
 pytest
 python -m compileall -q src
@@ -23,7 +39,7 @@ Keep provider-specific HTTP logic out of rubric code.
 
 ## Result handling
 
-V0.1 returns the raw provider response. Do not hard-code undocumented response fields in workflow logic yet. Once real account responses are captured as sanitized fixtures, add a normalization layer and regression tests.
+The MCP returns a normalized application-level schema. Keep raw provider-response assumptions inside the provider adapter and normalization layer. Add sanitized fixtures when the live JEV response contract changes.
 
 ## Security
 
