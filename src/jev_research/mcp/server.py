@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from mcp.server import MCPServer
+from mcp.server.mcpserver import MCPServer
 
 from jev_research.config import JevConfig
 from jev_research.jev.client import JevClient
