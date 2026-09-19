@@ -4,20 +4,40 @@
 
 Python 3.10 or newer is required. CI tests the package on Python 3.10 and 3.12.
 
-Before creating an environment:
+Check the available interpreter first:
 
 ```bash
 python --version
 ```
 
-If the active interpreter is older than 3.10, create a dedicated environment first. With Conda:
+Always work in an isolated environment.
+
+### Conda
 
 ```bash
 conda create -n jev-mcp python=3.11 -y
 conda activate jev-mcp
 ```
 
+### venv
+
+If a Python 3.10+ interpreter is already installed:
+
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+```
+
+Confirm the active interpreter:
+
+```bash
+python --version
+which python
+```
+
 ## Local checks
+
+Inside the activated environment:
 
 ```bash
 python -m pip install --upgrade pip
