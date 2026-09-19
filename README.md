@@ -35,11 +35,33 @@ The MCP returns normalized `judgments` so ChatGPT does not depend on vendor-spec
 
 ## Setup
 
-Python 3.11+ is recommended.
+Python **3.10 or newer is required**. Python 3.11 or 3.12 is recommended.
+
+Check first:
 
 ```bash
-python -m venv .venv
+python --version
+```
+
+If your base environment uses Python 3.9 or older, do not create the venv from that interpreter.
+
+### Recommended with Conda
+
+```bash
+conda create -n jev-mcp python=3.11 -y
+conda activate jev-mcp
+python --version
+pip install -e ".[dev]"
+cp .env.example .env
+```
+
+### Alternative with a system Python 3.11
+
+```bash
+python3.11 -m venv .venv
 source .venv/bin/activate
+python --version
+python -m pip install --upgrade pip
 pip install -e ".[dev]"
 cp .env.example .env
 ```
