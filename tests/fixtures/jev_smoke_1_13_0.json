@@ -1,0 +1,21 @@
+{
+  "judgments": {
+    "study_design": {
+      "confidence": 1.0,
+      "probabilities": {
+        "insufficient_information": 0.0,
+        "observational": 0.0,
+        "randomized_trial": 1.0
+      },
+      "probability_margin": 1.0,
+      "type": "choice",
+      "value": "randomized_trial"
+    }
+  },
+  "model": "jev-1.13.0",
+  "status": "ok",
+  "usage": {
+    "input_tokens": 385,
+    "output_tokens": 50
+  }
+}

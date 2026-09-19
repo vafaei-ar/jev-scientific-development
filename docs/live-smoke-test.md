@@ -4,8 +4,9 @@ The repository test suite does not require a real API key. Use the smoke command
 
 ## Run
 
+With `TYPESAFE_API_KEY` configured in `.env`:
+
 ```bash
-export TYPESAFE_API_KEY="..."
 jev-smoke
 ```
 
@@ -30,7 +31,26 @@ Expected shape:
 }
 ```
 
-The numeric values above are illustrative. Do not assert exact probabilities in tests.
+The numeric values above are illustrative. Do not assert exact probabilities for future live calls because model versions and calibration can change.
+
+## Verified live response
+
+A live smoke test on September 18, 2026 returned:
+
+- model: `jev-1.13.0`
+- selected study design: `randomized_trial`
+- confidence: `1.0`
+- probability margin: `1.0`
+- input tokens: `385`
+- output tokens: `50`
+
+The sanitized normalized response is stored in:
+
+```text
+tests/fixtures/jev_smoke_1_13_0.json
+```
+
+This fixture verifies the application-level response shape. It does not require or contain an API key.
 
 ## Why this is separate from CI
 
